@@ -1,0 +1,14 @@
+import dynamic from 'next/dynamic'
+import React from 'react'
+
+interface NoSSRProps {
+  children: React.ReactNode
+}
+
+const NoSSRComponent = ({ children }: NoSSRProps) => {
+  return <>{children}</>
+}
+
+export default dynamic(() => Promise.resolve(NoSSRComponent), {
+  ssr: false
+})
