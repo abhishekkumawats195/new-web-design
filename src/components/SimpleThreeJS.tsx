@@ -19,10 +19,11 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Snap Scroll Cubes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
             margin: 0; 
-            background-color: #e0c08d; 
+            background-color: #2c3e50; 
             overflow: hidden; 
             font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
         }
@@ -145,26 +146,36 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
             left: 40px;
             z-index: 10;
             font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .animated-heading:hover {
+            transform: translateY(-2px);
         }
         
         .word-container {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             cursor: pointer;
         }
         
         .char {
             display: inline-block;
             color: #ffffff;
-            font-size: 4rem;
-            font-weight: 900;
-            transform: rotate(45deg);
+            font-size: 2.8rem;
+            font-weight: 500;
+            transform: rotate(0deg);
             transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
         }
         
         .word-container:hover .char {
-            transform: rotate(0deg);
+            transform: rotate(30deg);
         }
         
         .char:nth-child(1) { transition-delay: 0.0s; }
@@ -177,13 +188,23 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
             position: fixed;
             top: 40px;
             right: 40px;
-            z-index: 5;
+            z-index: 10;
             font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .about-us-section:hover {
+            transform: translateY(-2px);
         }
         
         .about-word {
             display: flex;
-            gap: 2px;
+            gap: 1px;
             cursor: pointer;
             margin-bottom: 5px;
         }
@@ -191,15 +212,15 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
         .char-small {
             display: inline-block;
             color: #ffffff;
-            font-size: 1.5rem;
-            font-weight: 900;
-            transform: rotate(45deg);
+            font-size: 1.1rem;
+            font-weight: 500;
+            transform: rotate(0deg);
             transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
         }
         
         .about-word:hover .char-small {
-            transform: rotate(0deg);
+            transform: rotate(30deg);
         }
         
         .char-small:nth-child(1) { transition-delay: 0.0s; }
@@ -207,6 +228,10 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
         .char-small:nth-child(3) { transition-delay: 0.1s; }
         .char-small:nth-child(4) { transition-delay: 0.15s; }
         .char-small:nth-child(5) { transition-delay: 0.2s; }
+        .char-small:nth-child(6) { transition-delay: 0.25s; }
+        .char-small:nth-child(7) { transition-delay: 0.3s; }
+        .char-small:nth-child(8) { transition-delay: 0.35s; }
+        .char-small:nth-child(9) { transition-delay: 0.4s; }
         
         /* Cursor follower styles */
         .cursor-follower {
@@ -276,19 +301,21 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
             .animated-heading {
                 top: 20px;
                 left: 20px;
+                padding: 10px 14px;
             }
             
             .char {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .about-us-section {
                 top: 20px;
                 right: 20px;
+                padding: 8px 12px;
             }
             
             .char-small {
-                font-size: 1.5rem;
+                font-size: 1rem;
             }
             
             .bottom-info-box {
@@ -330,7 +357,7 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
     <!-- Animated heading in top left corner -->
     <div class="animated-heading">
         <div class="word-container">
-            <span class="char">t</span>
+            <span class="char">T</span>
             <span class="char">a</span>
             <span class="char">k</span>
             <span class="char">e</span>
@@ -389,12 +416,19 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
         varying vec2 vUv;
         uniform vec3 uColor;
         uniform float uIsActive;
+        uniform sampler2D uTexture;
+        uniform float uShowTexture;
         
         void main() {
             vec3 light = vec3(0.5, 0.5, 1.0);
             float d = dot(vNormal, light);
             
-            vec3 finalColor = uColor * (0.8 + d * 0.2);
+            // Get texture color
+            vec4 textureColor = texture2D(uTexture, vUv);
+            
+            // Mix between solid color and texture based on uShowTexture
+            vec3 baseColor = mix(uColor, textureColor.rgb, uShowTexture);
+            vec3 finalColor = baseColor * (0.8 + d * 0.2);
             
             if (uIsActive > 0.5) {
                 float borderWidth = 0.032;
@@ -429,34 +463,123 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
         const cubes = [];
         const cubeCount = 8;
         const fixedGap = 4;
-        const bgColors = ['#e0c08d', '#8ea35d', '#d16a5e', '#5d8ea3', '#a38d5d', '#c08de0', '#8d5da3', '#5de08d'];
+        const bgColors = ['#2c3e50', '#34495e', '#8e44ad', '#2980b9', '#27ae60', '#16a085', '#f39c12', '#e74c3c'];
         const titles = ['Asolo Prosecco', 'Serprino', 'Taverna Kus', 'Podcast Co', 'Modern Studio', 'Creative Lab', 'Digital Art', 'Brand Design'];
         
+        // Random images for each cube
+        const cubeImages = [
+            'https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=400&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=400&fit=crop&crop=center'
+        ];
+        
         const cubeColors = [
-            new THREE.Color(0xe0c08d),
-            new THREE.Color(0x8ea35d),
-            new THREE.Color(0xd16a5e),
-            new THREE.Color(0x5d8ea3),
-            new THREE.Color(0xa38d5d),
-            new THREE.Color(0xc08de0),
-            new THREE.Color(0x8d5da3),
-            new THREE.Color(0x5de08d)
+            new THREE.Color(0x2c3e50),
+            new THREE.Color(0x34495e),
+            new THREE.Color(0x8e44ad),
+            new THREE.Color(0x2980b9),
+            new THREE.Color(0x27ae60),
+            new THREE.Color(0x16a085),
+            new THREE.Color(0xf39c12),
+            new THREE.Color(0xe74c3c)
         ];
         
         const geometry = new THREE.BoxGeometry(2.7, 2.7, 2.7, 10, 60, 10);
+        const textureLoader = new THREE.TextureLoader();
         
         for (let i = 0; i < cubeCount; i++) {
-            const material = new THREE.ShaderMaterial({
+            // Load texture for front face only
+            const texture = textureLoader.load(cubeImages[i]);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            
+            // Create materials array for each face of the cube
+            const materials = [];
+            
+            // Right face (index 0) - solid color
+            materials.push(new THREE.ShaderMaterial({
                 vertexShader: document.getElementById('vertexShader').textContent,
                 fragmentShader: document.getElementById('fragmentShader').textContent,
                 uniforms: { 
                     uTwist: { value: 0 },
                     uColor: { value: cubeColors[i] },
-                    uIsActive: { value: 0.0 }
+                    uIsActive: { value: 0.0 },
+                    uTexture: { value: null },
+                    uShowTexture: { value: 0.0 }
                 }
-            });
+            }));
             
-            const cube = new THREE.Mesh(geometry, material);
+            // Left face (index 1) - solid color
+            materials.push(new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                uniforms: { 
+                    uTwist: { value: 0 },
+                    uColor: { value: cubeColors[i] },
+                    uIsActive: { value: 0.0 },
+                    uTexture: { value: null },
+                    uShowTexture: { value: 0.0 }
+                }
+            }));
+            
+            // Top face (index 2) - solid color
+            materials.push(new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                uniforms: { 
+                    uTwist: { value: 0 },
+                    uColor: { value: cubeColors[i] },
+                    uIsActive: { value: 0.0 },
+                    uTexture: { value: null },
+                    uShowTexture: { value: 0.0 }
+                }
+            }));
+            
+            // Bottom face (index 3) - solid color
+            materials.push(new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                uniforms: { 
+                    uTwist: { value: 0 },
+                    uColor: { value: cubeColors[i] },
+                    uIsActive: { value: 0.0 },
+                    uTexture: { value: null },
+                    uShowTexture: { value: 0.0 }
+                }
+            }));
+            
+            // Front face (index 4) - with texture
+            materials.push(new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                uniforms: { 
+                    uTwist: { value: 0 },
+                    uColor: { value: cubeColors[i] },
+                    uIsActive: { value: 0.0 },
+                    uTexture: { value: texture },
+                    uShowTexture: { value: 0.0 }
+                }
+            }));
+            
+            // Back face (index 5) - solid color
+            materials.push(new THREE.ShaderMaterial({
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                uniforms: { 
+                    uTwist: { value: 0 },
+                    uColor: { value: cubeColors[i] },
+                    uIsActive: { value: 0.0 },
+                    uTexture: { value: null },
+                    uShowTexture: { value: 0.0 }
+                }
+            }));
+            
+            const cube = new THREE.Mesh(geometry, materials);
             cube.position.y = -i * fixedGap;
             scene.add(cube);
             cubes.push(cube);
@@ -492,6 +615,38 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
                 (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
         }
         
+        // Convert hex to rgba with alpha
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+        }
+        
+        // Get contrast color (colorful options) based on background brightness
+        function getContrastColor(hexColor) {
+            // Convert hex to RGB
+            const r = parseInt(hexColor.slice(1, 3), 16);
+            const g = parseInt(hexColor.slice(3, 5), 16);
+            const b = parseInt(hexColor.slice(5, 7), 16);
+            
+            // Calculate brightness using luminance formula
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            
+            // Return colorful contrasts based on background
+            if (brightness > 150) {
+                // For light backgrounds, use dark vibrant colors
+                const darkColors = ['#2c3e50', '#8e44ad', '#27ae60', '#e74c3c', '#f39c12', '#34495e'];
+                const colorIndex = Math.floor((r + g + b) / 3) % darkColors.length;
+                return darkColors[colorIndex];
+            } else {
+                // For dark backgrounds, use light vibrant colors
+                const lightColors = ['#ecf0f1', '#f1c40f', '#e67e22', '#3498db', '#e74c3c', '#9b59b6'];
+                const colorIndex = Math.floor((r + g + b) / 3) % lightColors.length;
+                return lightColors[colorIndex];
+            }
+        }
+        
         scrollContainer.addEventListener('scroll', () => {
             const scrollY = scrollContainer.scrollTop;
             const vh = window.innerHeight;
@@ -515,31 +670,52 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
                 const cubeProgress = progress - index;
                 
                 cube.position.y = cubeProgress * fixedGap;
-                cube.material.uniforms.uTwist.value = cubeProgress * 1.5;
                 
                 const isActive = Math.abs(cubeProgress) < 0.5;
-                cube.material.uniforms.uIsActive.value = isActive ? 1.0 : 0.0;
+                
+                // Update all materials for twist and active state
+                cube.material.forEach((material, faceIndex) => {
+                    material.uniforms.uTwist.value = cubeProgress * 0.8;
+                    material.uniforms.uIsActive.value = isActive ? 1.0 : 0.0;
+                    
+                    // Show texture only on front face (index 4) when active
+                    if (faceIndex === 4) {
+                        material.uniforms.uShowTexture.value = isActive ? 1.0 : 0.0;
+                    }
+                });
                 
                 if (isActive) {
                     activeIndex = index;
                     document.body.style.backgroundColor = bgColors[index];
                     
-                    // Update animated heading color to match background (darker for visibility)
+                    // Update animated heading color and background
                     if (animatedHeading) {
                         const chars = animatedHeading.querySelectorAll('.char');
-                        const darkerHeadingColor = darkenColor(bgColors[index], 60); // Make it 60% darker
+                        const contrastColor = getContrastColor(bgColors[index]);
+                        const headingBg = hexToRgba(bgColors[index], 0.15); // Subtle background
+                        
                         chars.forEach(char => {
-                            char.style.color = darkerHeadingColor;
+                            char.style.color = contrastColor;
                         });
+                        
+                        // Update heading background to match theme
+                        animatedHeading.style.background = headingBg;
+                        animatedHeading.style.borderColor = hexToRgba(contrastColor, 0.2);
                     }
                     
-                    // Update about us section color
+                    // Update about us section color and background
                     if (aboutUsSection) {
                         const smallChars = aboutUsSection.querySelectorAll('.char-small');
-                        const darkerAboutColor = darkenColor(bgColors[index], 60); // Make it 60% darker
+                        const contrastColor = getContrastColor(bgColors[index]);
+                        const aboutBg = hexToRgba(bgColors[index], 0.15); // Subtle background
+                        
                         smallChars.forEach(char => {
-                            char.style.color = darkerAboutColor;
+                            char.style.color = contrastColor;
                         });
+                        
+                        // Update about us background to match theme
+                        aboutUsSection.style.background = aboutBg;
+                        aboutUsSection.style.borderColor = hexToRgba(contrastColor, 0.2);
                     }
                     
                     // Update cursor follower color
@@ -562,7 +738,9 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
                     }
                     
                     cubes.forEach((c) => {
-                        c.material.uniforms.uColor.value = cubeColors[index];
+                        c.material.forEach((mat) => {
+                            mat.uniforms.uColor.value = cubeColors[index];
+                        });
                     });
                     
                     window.parent.postMessage({
@@ -646,58 +824,79 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
         // Start cursor animation
         updateCursor();
         
-        // Add click functionality to the entire bottom box
+        // Add click functionality to the entire bottom box with better debugging
         if (bottomInfoBox) {
-            bottomInfoBox.addEventListener('click', (e) => {
+            console.log('Bottom info box found, adding click handler');
+            
+            bottomInfoBox.addEventListener('click', function(e) {
+                console.log('=== BOTTOM BOX CLICKED ===');
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Bottom box clicked!'); // Debug log
-                alert('Bottom box clicked! Text: ' + (dynamicText ? dynamicText.textContent : 'No text')); // Visual confirmation
-                const currentText = dynamicText ? dynamicText.textContent : 'CREATIVE STUDIO';
-                console.log('Current text:', currentText); // Debug log
                 
-                // Send message to parent
+                const currentText = dynamicText ? dynamicText.textContent : 'CREATIVE STUDIO';
+                console.log('Current text:', currentText);
+                
+                // Visual confirmation
+                alert('Bottom box clicked! Opening: ' + currentText);
+                
+                // Send message to parent with detailed logging
                 try {
+                    console.log('Sending message to parent...');
                     window.parent.postMessage({
                         type: 'sectionClick',
-                        sectionName: currentText
+                        sectionName: currentText,
+                        timestamp: Date.now()
                     }, '*');
-                    console.log('Message sent to parent successfully');
+                    console.log('Message sent successfully to parent');
                 } catch (error) {
                     console.error('Error sending message to parent:', error);
                 }
             });
             
-            // Add visual feedback
+            // Make sure it's clickable
             bottomInfoBox.style.cursor = 'pointer';
-            console.log('Click handler attached to bottom box');
+            bottomInfoBox.style.pointerEvents = 'auto';
+            console.log('Bottom box click handler attached successfully');
+        } else {
+            console.error('Bottom info box not found!');
         }
         
-        // Also add click to dynamic text specifically
+        // Also add click to dynamic text with better debugging
         if (dynamicText) {
-            dynamicText.addEventListener('click', (e) => {
+            console.log('Dynamic text found, adding click handler');
+            
+            dynamicText.addEventListener('click', function(e) {
+                console.log('=== DYNAMIC TEXT CLICKED ===');
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Dynamic text clicked!'); // Debug log
-                alert('Dynamic text clicked! Text: ' + dynamicText.textContent); // Visual confirmation
+                
                 const currentText = dynamicText.textContent;
-                console.log('Current text:', currentText); // Debug log
+                console.log('Dynamic text content:', currentText);
+                
+                // Visual confirmation
+                alert('Dynamic text clicked! Opening: ' + currentText);
                 
                 // Send message to parent
                 try {
+                    console.log('Sending message from dynamic text...');
                     window.parent.postMessage({
                         type: 'sectionClick',
-                        sectionName: currentText
+                        sectionName: currentText,
+                        source: 'dynamicText',
+                        timestamp: Date.now()
                     }, '*');
-                    console.log('Message sent to parent from text click');
+                    console.log('Message sent successfully from dynamic text');
                 } catch (error) {
-                    console.error('Error sending message to parent from text:', error);
+                    console.error('Error sending message from dynamic text:', error);
                 }
             });
             
-            // Add visual feedback
+            // Make sure it's clickable
             dynamicText.style.cursor = 'pointer';
-            console.log('Click handler attached to dynamic text');
+            dynamicText.style.pointerEvents = 'auto';
+            console.log('Dynamic text click handler attached successfully');
+        } else {
+            console.error('Dynamic text not found!');
         }
         
         function animate() {
@@ -723,12 +922,18 @@ const SimpleThreeJS: React.FC<SimpleThreeJSProps> = ({ onActiveChange, onSection
     iframeRef.current.src = url
 
     const handleMessage = (event: MessageEvent) => {
-      console.log('Message received in parent:', event.data); // Debug log
+      console.log('=== MESSAGE RECEIVED IN PARENT ===');
+      console.log('Event data:', event.data);
+      console.log('Event origin:', event.origin);
+      
       if (event.data.type === 'activeChange') {
+        console.log('Active change message received');
         onActiveChange(event.data.index, event.data.bgColor, event.data.title)
       }
+      
       if (event.data.type === 'sectionClick') {
-        console.log('Section click received:', event.data.sectionName); // Debug log
+        console.log('Section click message received:', event.data.sectionName);
+        console.log('Calling onSectionClick...');
         onSectionClick(event.data.sectionName)
       }
     }

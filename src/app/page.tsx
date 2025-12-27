@@ -103,9 +103,20 @@ export default function Home() {
   }, [mounted])
 
   const handleSectionClick = (sectionName: string) => {
-    console.log('handleSectionClick called with:', sectionName); // Debug log
-    alert('Section click received: ' + sectionName); // Visual confirmation
-    setSelectedSection(sectionName)
+    console.log('=== HANDLE SECTION CLICK CALLED ===');
+    console.log('Section name received:', sectionName);
+    console.log('Available sections:', Object.keys(sectionDetails));
+    
+    // Check if section exists
+    if (sectionDetails[sectionName as SectionKey]) {
+      console.log('Section found in sectionDetails');
+      alert('Opening modal for: ' + sectionName);
+      setSelectedSection(sectionName);
+      console.log('Selected section set to:', sectionName);
+    } else {
+      console.error('Section not found in sectionDetails:', sectionName);
+      alert('Section not found: ' + sectionName);
+    }
   }
 
   const handleCloseModal = () => {
